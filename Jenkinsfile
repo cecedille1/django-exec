@@ -44,13 +44,14 @@ def run_tests(python_version, django) {
     def test_name = "python${python_version}-django${django_major}.${django_minor}";
     def venv_path = "${workspace}/.envs/${test_name}";
 
-    venv("-r ${workspace}/requirements.txt -r ${workspace}/requirements.d/robot.txt -r ${workspace}/requirements.d/tests.txt",  venv_path, python_version);
+    venv("-r ${workspace}/requirements.txt -r ${workspace}/requirements.d/tests.txt",  venv_path, python_version);
     pip('install', "'django>=${django_major}.${django_minor},<${django_major}.${django_minor_next}'", venv_path);
+/*
     if (python_version == '2') {
         pip('install', "-r ${workspace}/requirements.d/tests-python2.txt", venv_path);
     }
+*/
     run('pytest',  "--junitxml=${workspace}/unit-${test_name}.tests.xml", venv_path);
-    run('robot',  "--pythonpath=${workspace}/tests/ --output=${workspace}/output-${test_name}.xml  --xunit=${workspace}/functional-${test_name}.tests.xml tests/*.robot", venv_path);
 }
 def run(prog, command, env=default_env) {
     sh("${env}/bin/${prog} ${command}");
