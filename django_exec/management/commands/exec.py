@@ -145,7 +145,7 @@ def parse(input):
     for line in input.split('\n'):
         if buffer and not line.startswith((' ', '\t')):
             all_lines.append(';'.join(buffer))
-            buffer.clear()
+            buffer = []
         buffer.append(line)
     all_lines.append(';'.join(buffer))
     return all_lines
