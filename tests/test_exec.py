@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import pytest
+import sys
 import io
 import os.path
 from django.utils import six
@@ -89,6 +90,8 @@ def test_syntax_error(command, stdout):
 
 def test_print_dict(command, stdout):
     command.run_from_argv(['./manage.py', 'exec', 'dict(a=1, b=2)'])
+    if sys.version_info.major == 3 and sys.version_info.major < 6:
+        pytest.xfail('Inconsistent dict hashing until python 3.5')
     assert stdout.getvalue() == ">>> dict(a=1, b=2)\n    {\n        'a': 1,\n        'b': 2,\n    }\n"
 
 
