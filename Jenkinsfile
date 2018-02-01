@@ -44,8 +44,8 @@ def run_tests(python_version, django) {
     def test_name = "python${python_version}-django${django_major}.${django_minor}";
     def venv_path = "${workspace}/.envs/${test_name}";
 
-    venv("-r ${workspace}/requirements.txt -r ${workspace}/requirements.d/tests.txt",  venv_path, python_version);
     pip('install', "'django>=${django_major}.${django_minor},<${django_major}.${django_minor_next}'", venv_path);
+    venv("-r ${workspace}/requirements.txt -r ${workspace}/requirements.d/tests.txt",  venv_path, python_version);
 /*
     if (python_version == '2') {
         pip('install', "-r ${workspace}/requirements.d/tests-python2.txt", venv_path);
