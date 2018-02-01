@@ -1,0 +1,39 @@
+*.py[cod]
+
+#temp files
+*.sw?
+
+# Packages
+*.egg
+*.egg-info
+/dist/
+/build/
+/.envs/
+
+# Installer logs
+pip-log.txt
+
+# Unit test / coverage reports
+.coverage
+.tox
+nosetests.xml
+
+# Translations
+*.mo
+
+# Mr Developer
+.mr.developer.cfg
+.project
+.pydevproject
+.project.vip
+
+# Complexity
+output/*.html
+output/*/index.html
+
+# Sphinx
+docs/_build
+
+# Cookiecutter
+output/
+boilerplate/
