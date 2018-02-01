@@ -27,7 +27,10 @@ class Line(collections.namedtuple('Line', ['ast', 'original'])):
             parsed = ast.parse(stripped, mode='eval')
             return Expression(parsed, original)
         except SyntaxError:
-            parsed = ast.parse(stripped)
+            try:
+                parsed = ast.parse(stripped)
+            except SyntaxError as e:
+                return MisformattedStatement(e, original)
             return Statement(parsed, original)
 
     def __str__(self):
@@ -64,6 +67,15 @@ class Expression(Line):
 
 
 @python_2_unicode_compatible
+class MisformattedStatement(Line):
+    def __call__(self, globals, locals):
+        raise self.ast
+
+    def __str__(self):
+        return u'{}\n{}'.format(self.original, self.ast)
+
+
+@python_2_unicode_compatible
 class Failed(collections.namedtuple('Failed', ['line', 'error'])):
     def __str__(self):
         return u'{}\n{}'.format(self.line, self.error)
@@ -85,7 +97,7 @@ class Evaluation(collections.namedtuple('Evaluation', ['line', 'evaluation'])):
     @property
     def evaluation_repr(self):
         if isinstance(self.evaluation, dict):
-            return '{\n%s\n}' % ''.join('    {!r}: {!r}\n'.format(*args) for args in self.evaluation.items())
+            return '{\n%s    }' % ''.join('        {!r}: {!r},\n'.format(*args) for args in self.evaluation.items())
         return repr(self.evaluation)
 
     def __str__(self):
@@ -193,8 +205,12 @@ class Command(BaseCommand):
     executed.
     """
 
+    def __init__(self, *args, **kw):
+        self.stdin = kw.pop('stdin', sys.stdin)
+        super(Command, self).__init__(*args, **kw)
+
     def add_arguments(self, parser):
-        super().add_arguments(parser)
+        super(Command, self).add_arguments(parser)
         parser.add_argument('cmd')
         parser.add_argument('-c',
                             '--contine',
@@ -206,7 +222,7 @@ class Command(BaseCommand):
 
     def handle(self, cmd, stop_at_exception=False, **kw):
         if cmd == '-':
-            statements = parse(sys.stdin.read())
+            statements = parse(self.stdin.read())
         elif cmd.startswith(('./', '/')):
             with open(cmd, 'r') as input_file:
                 statements = parse(input_file.read())
@@ -215,4 +231,4 @@ class Command(BaseCommand):
 
         x = Executor(statements, stop_at_exception=stop_at_exception)
         for r in x():
-            sys.stdout.write(u'{}\n'.format(r))
+            self.stdout.write(u'{}\n'.format(r))

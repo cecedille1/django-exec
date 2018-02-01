@@ -57,15 +57,17 @@ def setup_options():
         long_description=readme,
         author='Grégoire ROCHER',
         author_email='gregoire@emencia.com',
-        packages=setuptools.find_packages(),
+        packages=setuptools.find_packages(
+            exclude=[
+                '*.tests',
+                '*.tests.*',
+            ]
+        ),
         include_package_data=True,
+        install_requires=parse_requirements('requirements.txt'),
         zip_safe=False,
     )
 
 
-try:
-    import sett
-    with open(ROOT.joinpath('localpavement.py'), 'r') as localpavement:
-        exec(localpavement.read(), locals(), globals())
-except (OSError, ImportError) as e:
-    pass
+if os.path.realpath(sys.argv[0]) == os.path.realpath(os.path.join(os.path.dirname(__file__), 'setup.py')):
+    setup_options()

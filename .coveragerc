@@ -3,4 +3,7 @@ exclude_lines =
     # Don't complain if tests don't hit defensive assertion code:
     raise NotImplementedError
     def __repr__
-
+[run]
+omit =
+    ./.envs/*
+    ./tests/*
