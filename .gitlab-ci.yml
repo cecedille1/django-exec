@@ -72,7 +72,8 @@ build:
     paths:
     - dist/*.whl
 publish:
-    only: releases
+    only:
+        - releases
     script:
         - python setup.py register -r $INDEX
         - python setup.py bdist_wheel upload
