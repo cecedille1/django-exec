@@ -18,16 +18,16 @@ quality:
             - ./flake8.log
 test-collection:
     stage: test-collection
-    artifacts:
-        when: always
-        paths:
-            - ./unit-*.tests.xml
 .test: &base_test
     stage: test
     script:
         - pip install "django>=${DJANGO_VERSION}.0,<${DJANGO_VERSION}.9999"
         - pip install -r requirements.d/tests.txt
         - pytest "--junitxml=./unit-${CI_JOB_NAME}.tests.xml"
+    artifacts:
+        when: always
+        paths:
+            - "./unit-${CI_JOB_NAME}.tests.xml"
 .test27: &test27
     <<: *base_test
     image: python:2.7-alpine
