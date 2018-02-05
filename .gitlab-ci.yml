@@ -10,16 +10,16 @@ stages:
         - pip install django>=${DJANGO_VERSION}.0,<${DJANGO_VERSION}.9999
         - pip install -r requirements.d/tests.txt
         - pytest
-.test27:
+.test27: &test27
     <<: *base_test
     image: python2.7
-.test34:
+.test34: &test34
     <<: *base_test
     image: python3.4
-.test35:
+.test35: &test35
     <<: *base_test
     image: python3.5
-.test36:
+.test36: &test36
     <<: *base_test
     image: python3.6
 test:python2:django18:
