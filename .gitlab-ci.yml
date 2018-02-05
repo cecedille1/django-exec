@@ -4,6 +4,7 @@ variables:
 stages:
     - quality
     - test
+    - test-collection
     - build
     - publish
 quality:
@@ -11,6 +12,16 @@ quality:
     script:
         - pip install -r requirements.d/jenkins.txt
         - flake8 --output-file=./flake8.log
+    artifacts:
+        when: always
+        paths:
+            - ./flake8.log
+test-collection:
+    stage: test-collection
+    artifacts:
+        when: always
+        paths:
+            - ./unit-*.tests.xml
 .test: &base_test
     stage: test
     script:
