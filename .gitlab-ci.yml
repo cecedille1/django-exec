@@ -7,6 +7,7 @@ stages:
     - build
     - publish
 quality:
+    stage: quality
     script:
         - pip install -r requirements.d/jenkins.txt
         - flake8 --output-file=./flake8.log
