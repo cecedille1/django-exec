@@ -24,47 +24,47 @@ stages:
     image: python3.6
 test:python2:django18:
     <<: *test27
-    variable:
+    variables:
         DJANGO_VERSION: '1.8'
 test:python2:django19:
     <<: *test27
-    variable:
+    variables:
         DJANGO_VERSION: '1.9'
 test:python2:django110:
     <<: *test27
-    variable:
+    variables:
         DJANGO_VERSION: '1.10'
 test:python2:django111:
     <<: *test27
-    variable:
+    variables:
         DJANGO_VERSION: '1.11'
 test:python3:django18:
     <<: *test34
-    variable:
+    variables:
         DJANGO_VERSION: '1.8'
 test:python3:django19:
     <<: *test34
-    variable:
+    variables:
         DJANGO_VERSION: '1.9'
 test:python3:django110:
     <<: *test34
-    variable:
+    variables:
         DJANGO_VERSION: '1.10'
 test:python3:django111:
     <<: *test34
-    variable:
+    variables:
         DJANGO_VERSION: '1.11'
 test:python3:django20:
     <<: *test34
-    variable:
+    variables:
         DJANGO_VERSION: '2.0'
 test:python35:django18:
     <<: *test35
-    variable:
+    variables:
         DJANGO_VERSION: '1.8'
 test:python36:django18:
     <<: *test36
-    variable:
+    variables:
         DJANGO_VERSION: '1.8'
 build:
   script: python setup.py bdist_wheel
