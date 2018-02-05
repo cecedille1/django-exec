@@ -13,16 +13,16 @@ stages:
         - pytest
 .test27: &test27
     <<: *base_test
-    image: python2.7
+    image: python:2.7-alpine
 .test34: &test34
     <<: *base_test
-    image: python3.4
+    image: python:3.4-alpine
 .test35: &test35
     <<: *base_test
-    image: python3.5
+    image: python:3.5-alpine
 .test36: &test36
     <<: *base_test
-    image: python3.6
+    image: python:3.6-alpine
 test:python2:django18:
     <<: *test27
     variables:
