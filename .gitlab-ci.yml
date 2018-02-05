@@ -1,11 +1,78 @@
 image: python:latest
-test:
-  script:
-  - pip install -r requirements.d/tests.txt
-  - pytest
-run:
-  script:
-  - python setup.py bdist_wheel
+variables:
+    INDEX: nerim
+stages:
+    - test
+    - build
+    - publish
+.test: &base_test
+    script:
+        - pip install django>=${DJANGO_VERSION}.0,<${DJANGO_VERSION}.9999
+        - pip install -r requirements.d/tests.txt
+        - pytest
+.test27:
+    <<: *base_test
+    image: python2.7
+.test34:
+    <<: *base_test
+    image: python3.4
+.test35:
+    <<: *base_test
+    image: python3.5
+.test36:
+    <<: *base_test
+    image: python3.6
+test:python2:django18:
+    <<: *test27
+    variable:
+        DJANGO_VERSION: '1.8'
+test:python2:django19:
+    <<: *test27
+    variable:
+        DJANGO_VERSION: '1.9'
+test:python2:django110:
+    <<: *test27
+    variable:
+        DJANGO_VERSION: '1.10'
+test:python2:django111:
+    <<: *test27
+    variable:
+        DJANGO_VERSION: '1.11'
+test:python3:django18:
+    <<: *test34
+    variable:
+        DJANGO_VERSION: '1.8'
+test:python3:django19:
+    <<: *test34
+    variable:
+        DJANGO_VERSION: '1.9'
+test:python3:django110:
+    <<: *test34
+    variable:
+        DJANGO_VERSION: '1.10'
+test:python3:django111:
+    <<: *test34
+    variable:
+        DJANGO_VERSION: '1.11'
+test:python3:django20:
+    <<: *test34
+    variable:
+        DJANGO_VERSION: '2.0'
+test:python35:django18:
+    <<: *test35
+    variable:
+        DJANGO_VERSION: '1.8'
+test:python36:django18:
+    <<: *test36
+    variable:
+        DJANGO_VERSION: '1.8'
+build:
+  script: python setup.py bdist_wheel
   artifacts:
     paths:
     - dist/*.whl
+publish:
+    only: releases
+    script:
+        - python setup.py register -r $INDEX
+        - python setup.py bdist_wheel upload
