@@ -37,47 +37,47 @@ quality:
 .test36: &test36
     <<: *base_test
     image: python:3.6-alpine
-test:python2:django18:
+test:python2:18:
     <<: *test27
     variables:
         DJANGO_VERSION: '1.8'
-test:python2:django19:
+test:python2:19:
     <<: *test27
     variables:
         DJANGO_VERSION: '1.9'
-test:python2:django110:
+test:python2:110:
     <<: *test27
     variables:
         DJANGO_VERSION: '1.10'
-test:python2:django111:
+test:python2:111:
     <<: *test27
     variables:
         DJANGO_VERSION: '1.11'
-test:python3:django18:
+test:python3:18:
     <<: *test34
     variables:
         DJANGO_VERSION: '1.8'
-test:python3:django19:
+test:python3:19:
     <<: *test34
     variables:
         DJANGO_VERSION: '1.9'
-test:python3:django110:
+test:python3:110:
     <<: *test34
     variables:
         DJANGO_VERSION: '1.10'
-test:python3:django111:
+test:python3:111:
     <<: *test34
     variables:
         DJANGO_VERSION: '1.11'
-test:python3:django20:
+test:python3:20:
     <<: *test34
     variables:
         DJANGO_VERSION: '2.0'
-test:python35:django18:
+test:python35:18:
     <<: *test35
     variables:
         DJANGO_VERSION: '1.8'
-test:python36:django18:
+test:python36:18:
     <<: *test36
     variables:
         DJANGO_VERSION: '1.8'
