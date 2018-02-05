@@ -4,7 +4,6 @@ variables:
 stages:
     - quality
     - test
-    - test-collection
     - build
     - publish
 quality:
@@ -16,8 +15,6 @@ quality:
         when: always
         paths:
             - ./flake8.log
-test-collection:
-    stage: test-collection
 .test: &base_test
     stage: test
     script:
