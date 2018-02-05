@@ -2,15 +2,20 @@ image: python:latest
 variables:
     INDEX: nerim
 stages:
+    - quality
     - test
     - build
     - publish
+quality:
+    script:
+        - pip install -r requirements.d/jenkins.txt
+        - flake8 --output-file=./flake8.log
 .test: &base_test
     stage: test
     script:
         - pip install "django>=${DJANGO_VERSION}.0,<${DJANGO_VERSION}.9999"
         - pip install -r requirements.d/tests.txt
-        - pytest
+        - pytest "--junitxml=./unit-${CI_JOB_NAME}.tests.xml"
 .test27: &test27
     <<: *base_test
     image: python:2.7-alpine
