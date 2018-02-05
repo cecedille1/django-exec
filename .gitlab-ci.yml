@@ -8,7 +8,7 @@ stages:
 .test: &base_test
     stage: test
     script:
-        - pip install 'django>=${DJANGO_VERSION}.0,<${DJANGO_VERSION}.9999'
+        - pip install "django>=${DJANGO_VERSION}.0,<${DJANGO_VERSION}.9999"
         - pip install -r requirements.d/tests.txt
         - pytest
 .test27: &test27
