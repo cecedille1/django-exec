@@ -68,11 +68,13 @@ test:python36:django18:
     variables:
         DJANGO_VERSION: '1.8'
 build:
-  script: python setup.py bdist_wheel
-  artifacts:
-    paths:
-    - dist/*.whl
+    stage: build
+    script: python setup.py bdist_wheel
+    artifacts:
+        paths:
+            - dist/*.whl
 publish:
+    stage: publish
     only:
         - releases
     script:
