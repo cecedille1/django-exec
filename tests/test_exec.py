@@ -102,4 +102,4 @@ def test_print_dict(command, stdout):
 
 def test_class_decl(command, stdout):
     command.run_from_argv(['./manage.py', 'exec', 'class A(object):pass'])
-    assert stdout.getvalue() == ">>> class A(object):pass\n    A: <class 'django_exec.management.commands.exec.A'>\n"
+    assert stdout.getvalue() == ">>> class A(object):pass\n    A: <class 'A'>\n"

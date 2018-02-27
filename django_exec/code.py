@@ -114,6 +114,7 @@ class Executor(object):
     def __init__(self, statements):
         self._locals = {}
         self._globals = globals()
+        self._globals['__name__'] = None
         self._code = [Line.build(line) for line in statements]
 
     def __iter__(self):
