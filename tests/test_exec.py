@@ -65,6 +65,11 @@ def test_exec_assign(command, stdout):
     assert stdout.getvalue() == '>>> a = 1\n    a: 1\n'
 
 
+def test_exec_print(command, stdout):
+    command.run_from_argv(['./manage.py', 'exec', 'print(1)'])
+    assert stdout.getvalue() == '>>> print(1)\n    None\n'
+
+
 def test_exec_import(command, stdout):
     command.run_from_argv(['./manage.py', 'exec', 'from os import SEEK_CUR'])
     assert stdout.getvalue() == '>>> from os import SEEK_CUR\n    SEEK_CUR: 1\n'

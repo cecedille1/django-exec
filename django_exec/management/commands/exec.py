@@ -78,13 +78,13 @@ class MisformattedStatement(Line):
 @python_2_unicode_compatible
 class Failed(collections.namedtuple('Failed', ['line', 'error'])):
     def __str__(self):
-        return u'{}\n{}'.format(self.line, self.error)
+        return str(self.error)
 
 
 @python_2_unicode_compatible
 class Success(collections.namedtuple('Success', ['line', 'additions', 'changes'])):
     def __str__(self):
-        buff = [text_type(self.line)]
+        buff = []
         for k, v in sorted(self.additions.items()):
             buff.append(u'    {}: {!r}'.format(k, v))
         for k, (v1, v2) in sorted(self.changes.items()):
@@ -101,7 +101,7 @@ class Evaluation(collections.namedtuple('Evaluation', ['line', 'evaluation'])):
         return repr(self.evaluation)
 
     def __str__(self):
-        return u'{}\n    {}'.format(self.line, self.evaluation_repr)
+        return '    ' + self.evaluation_repr
 
 
 class Executor(object):
@@ -112,25 +112,38 @@ class Executor(object):
     a detailled version of the results of the operation.
     """
 
-    def __init__(self, statements, stop_at_exception=True):
+    def __init__(self, statements):
         self._locals = {}
         self._globals = globals()
-
         self._code = [Line.build(line) for line in statements]
-        self._continue = not stop_at_exception
+
+    def __iter__(self):
+        for code in self._code:
+            yield ExecutionStep(code, self._globals, self._locals)
+
+
+@python_2_unicode_compatible
+class ExecutionStep(object):
+    def __init__(self, code, globals_, locals_):
+        self.code = code
+        self.globals_ = globals_
+        self.locals_ = locals_
+        self._failed = None
+
+    def __str__(self):
+        return str(self.code)
 
     def __call__(self):
-        for code in self._code:
-            try:
-                yield code(self._globals, self._locals)
-            except Exception:
-                exc_type, exc_value, exc_traceback = sys.exc_info()
-                tb = u''.join(traceback.format_tb(exc_traceback) +
-                              ['   ', code.original, u'\n'] +
-                              traceback.format_exception_only(exc_type, exc_value))
-                yield Failed(code, tb)
-                if not self._continue:
-                    break
+        try:
+            self.failed = False
+            return self.code(self.globals_, self.locals_)
+        except Exception:
+            exc_type, exc_value, exc_traceback = sys.exc_info()
+            tb = u''.join(traceback.format_tb(exc_traceback) +
+                          ['   ', self.code.original, u'\n'] +
+                          traceback.format_exception_only(exc_type, exc_value))
+            self.failed = True
+            return Failed(self.code, tb)
 
 
 def parse(input):
@@ -229,6 +242,9 @@ class Command(BaseCommand):
         else:
             statements = parse(cmd)
 
-        x = Executor(statements, stop_at_exception=stop_at_exception)
-        for r in x():
+        for line in Executor(statements):
+            self.stdout.write(u'{}\n'.format(line))
+            r = line()
             self.stdout.write(u'{}\n'.format(r))
+            if stop_at_exception and line.failed:
+                break
