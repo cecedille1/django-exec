@@ -1,7 +1,4 @@
 image: python:latest
-only:
-    - master
-    - trigger
 variables:
     INDEX: nerim
 stages:
