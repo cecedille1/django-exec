@@ -65,6 +65,11 @@ def test_exec_assign(command, stdout):
     assert stdout.getvalue() == '>>> a = 1\n    a: 1\n'
 
 
+def test_exec_print(command, stdout):
+    command.run_from_argv(['./manage.py', 'exec', '__import__("sys").stdout.write("1\\n")'])
+    assert stdout.getvalue() == '>>> __import__("sys").stdout.write("1\\n")\n    None\n'
+
+
 def test_exec_import(command, stdout):
     command.run_from_argv(['./manage.py', 'exec', 'from os import SEEK_CUR'])
     assert stdout.getvalue() == '>>> from os import SEEK_CUR\n    SEEK_CUR: 1\n'
@@ -90,11 +95,11 @@ def test_syntax_error(command, stdout):
 
 def test_print_dict(command, stdout):
     command.run_from_argv(['./manage.py', 'exec', 'dict(a=1, b=2)'])
-    if sys.version_info.major == 3 and sys.version_info.major < 6:
-        pytest.xfail('Inconsistent dict hashing until python 3.5')
+    if sys.version_info.major == 3 and sys.version_info.minor < 6:
+        pytest.xfail('Inconsistent dict hashing until python 3.6')
     assert stdout.getvalue() == ">>> dict(a=1, b=2)\n    {\n        'a': 1,\n        'b': 2,\n    }\n"
 
 
 def test_class_decl(command, stdout):
     command.run_from_argv(['./manage.py', 'exec', 'class A(object):pass'])
-    assert stdout.getvalue() == ">>> class A(object):pass\n    A: <class 'django_exec.management.commands.exec.A'>\n"
+    assert stdout.getvalue() == ">>> class A(object):pass\n    A: <class 'A'>\n"
