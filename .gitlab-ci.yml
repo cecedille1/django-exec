@@ -7,6 +7,9 @@ stages:
     - build
     - publish
 quality:
+    only:
+        - master
+        - trigger
     stage: quality
     script:
         - pip install -r requirements.d/jenkins.txt
@@ -17,6 +20,8 @@ quality:
             - ./flake8.log
 .test: &base_test
     stage: test
+    only:
+        - trigger
     script:
         - pip install "django>=${DJANGO_VERSION}.0,<${DJANGO_VERSION}.9999"
         - pip install -r requirements.d/tests.txt
@@ -84,6 +89,9 @@ test:python36:18:
 build:
     stage: build
     script: python setup.py bdist_wheel
+    only:
+        - releases
+        - master
     artifacts:
         paths:
             - dist/*.whl
