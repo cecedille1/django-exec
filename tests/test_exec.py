@@ -66,8 +66,8 @@ def test_exec_assign(command, stdout):
 
 
 def test_exec_print(command, stdout):
-    command.run_from_argv(['./manage.py', 'exec', 'print(1)'])
-    assert stdout.getvalue() == '>>> print(1)\n    None\n'
+    command.run_from_argv(['./manage.py', 'exec', '__import__("sys").stdout.write("1\\n")'])
+    assert stdout.getvalue() == '>>> __import__("sys").stdout.write("1\\n")\n    None\n'
 
 
 def test_exec_import(command, stdout):
