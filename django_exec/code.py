@@ -1,15 +1,9 @@
-# -*- coding: utf-8 -*-
-
 import ast
 import sys
 import collections
 import traceback
 
-from django.utils.six import exec_
-from django.utils.encoding import python_2_unicode_compatible
 
-
-@python_2_unicode_compatible
 class Line(collections.namedtuple('Line', ['ast', 'original'])):
     @classmethod
     def build(cls, original):
@@ -17,10 +11,10 @@ class Line(collections.namedtuple('Line', ['ast', 'original'])):
 
         if stripped.startswith('_ '):
             _, stripped = stripped.split(' ', 1)
-            stripped = '{{x: y for x, y in ({}).__dict__.items() if not x.startswith("__")}}'.format(stripped)
+            stripped = f'{{x: y for x, y in ({stripped}).__dict__.items() if not x.startswith("__")}}'
         elif stripped.startswith('__ '):
             _, stripped = stripped.split(' ', 1)
-            stripped = '({}).__dict__'.format(stripped)
+            stripped = f'({stripped}).__dict__'
 
         try:
             parsed = ast.parse(stripped, mode='eval')
@@ -33,7 +27,7 @@ class Line(collections.namedtuple('Line', ['ast', 'original'])):
             return Statement(parsed, original)
 
     def __str__(self):
-        return u'>>> {}'.format(self.original)
+        return f'>>> {self.original}'
 
 
 class Statement(Line):
@@ -53,7 +47,7 @@ class Statement(Line):
 
     @property
     def code(self):
-        return compile(self.ast, u'<string>', 'exec')
+        return compile(self.ast, '<string>', 'exec')
 
 
 class Expression(Line):
@@ -65,42 +59,38 @@ class Expression(Line):
         return compile(self.ast, self.original, 'eval')
 
 
-@python_2_unicode_compatible
 class MisformattedStatement(Line):
     def __call__(self, globals, locals):
         raise self.ast
 
     def __str__(self):
-        return u'{}\n{}'.format(self.original, self.ast)
+        return '{}\n{}'.format(self.original, self.ast)
 
 
-@python_2_unicode_compatible
 class Failed(collections.namedtuple('Failed', ['line', 'error'])):
     def __str__(self):
         return str(self.error)
 
 
-@python_2_unicode_compatible
 class Success(collections.namedtuple('Success', ['line', 'additions', 'changes'])):
     def __str__(self):
         buff = []
         for k, v in sorted(self.additions.items()):
-            buff.append(u'    {}: {!r}'.format(k, v))
+            buff.append('    {}: {!r}'.format(k, v))
         for k, (v1, v2) in sorted(self.changes.items()):
-            buff.append(u'    {}: {!r} -> {!r}'.format(k, v1, v2))
-        return u'\n'.join(buff)
+            buff.append('    {}: {!r} -> {!r}'.format(k, v1, v2))
+        return '\n'.join(buff)
 
 
-@python_2_unicode_compatible
 class Evaluation(collections.namedtuple('Evaluation', ['line', 'evaluation'])):
     @property
     def evaluation_repr(self):
         if isinstance(self.evaluation, dict):
-            return '{\n%s    }' % ''.join('        {!r}: {!r},\n'.format(*args) for args in self.evaluation.items())
+            return '{\n%s    }' % ''.join(f'        {key!r}: {value!r},\n' for key, value in self.evaluation.items())
         return repr(self.evaluation)
 
     def __str__(self):
-        return '    ' + self.evaluation_repr
+        return f'    {self.evaluation_repr}'
 
 
 class Executor(object):
@@ -122,7 +112,6 @@ class Executor(object):
             yield ExecutionStep(code, self._globals, self._locals)
 
 
-@python_2_unicode_compatible
 class ExecutionStep(object):
     def __init__(self, code, globals_, locals_):
         self.code = code
@@ -139,8 +128,8 @@ class ExecutionStep(object):
             return self.code(self.globals_, self.locals_)
         except Exception:
             exc_type, exc_value, exc_traceback = sys.exc_info()
-            tb = u''.join(traceback.format_tb(exc_traceback) +
-                          ['   ', self.code.original, u'\n'] +
+            tb = ''.join(traceback.format_tb(exc_traceback) +
+                          ['   ', self.code.original, '\n'] +
                           traceback.format_exception_only(exc_type, exc_value))
             self.failed = True
             return Failed(self.code, tb)
