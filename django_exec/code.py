@@ -20,13 +20,17 @@ class Line(collections.namedtuple('Line', ['ast', 'original'])):
 
         try:
             parsed = ast.parse(stripped, mode='eval')
-            return Expression(parsed, original)
         except SyntaxError:
-            try:
-                parsed = ast.parse(stripped)
-            except SyntaxError as e:
-                return MisformattedStatement(e, original)
-            return Statement(parsed, original)
+            pass
+        else:
+            return Expression(parsed, original)
+
+        try:
+            parsed = ast.parse(stripped)
+        except SyntaxError as e:
+            return MisformattedStatement(e, original)
+
+        return Statement(parsed, original)
 
     def __str__(self):
         return f'>>> {self.original}'
@@ -66,7 +70,8 @@ class MisformattedStatement(Line):
         raise self.ast
 
     def __str__(self):
-        return '{}\n{}'.format(self.original, self.ast)
+        original = super().__str__()
+        return '{}\n{}'.format(original, self.ast)
 
 
 class Failed(collections.namedtuple('Failed', ['line', 'error'])):
@@ -134,15 +139,14 @@ class ExecutionStep(object):
         self.code = code
         self.globals_ = globals_
         self.locals_ = locals_
-        self._failed = None
+        self.failed = None
 
     def __str__(self):
         return str(self.code)
 
     def __call__(self):
         try:
-            self.failed = False
-            return self.code(self.globals_, self.locals_)
+            value = self.code(self.globals_, self.locals_)
         except Exception:
             exc_type, exc_value, exc_traceback = sys.exc_info()
             tb = ''.join(traceback.format_tb(exc_traceback) +
@@ -150,3 +154,5 @@ class ExecutionStep(object):
                           traceback.format_exception_only(exc_type, exc_value))
             self.failed = True
             return Failed(self.code, tb)
+        self.failed = False
+        return value
