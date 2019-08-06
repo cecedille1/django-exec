@@ -3,9 +3,8 @@
 import sys
 
 from django.core.management import BaseCommand
-
-from django_exec.parse import parse
 from django_exec.code import Executor
+from django_exec.__main__ import augment_parser
 
 
 class Command(BaseCommand):
@@ -67,15 +66,8 @@ class Command(BaseCommand):
         super(Command, self).__init__(*args, **kw)
 
     def add_arguments(self, parser):
-        super(Command, self).add_arguments(parser)
-        parser.add_argument('cmd')
-        parser.add_argument('-c',
-                            '--contine',
-                            dest='stop_at_exception',
-                            help='Continue when an exception is raised',
-                            action='store_false',
-                            default=True,
-                            )
+        super().add_arguments(parser)
+        augment_parser(parser)
 
     def handle(self, cmd, stop_at_exception=False, **kw):
         statements = parse(cmd, stdin=self.stdin)

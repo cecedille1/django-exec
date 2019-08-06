@@ -1,28 +1,29 @@
 # -*- coding: utf-8 -*-
 
 import sys
-import argparse
+from argparse import ArgumentParser
 
 from django_exec.parse import parse
 from django_exec.code import Executor
 
 
-def get_parser():
-    parser = argparse.ArgumentParser()
+def augment_parser(parser: ArgumentParser) -> ArgumentParser:
     parser.add_argument('cmd')
-    parser.add_argument('-c',
-                        '--contine',
-                        dest='stop_at_exception',
-                        help='Continue when an exception is raised',
-                        action='store_false',
-                        default=True,
-                        )
+    parser.add_argument(
+        '-c',
+        '--contine',
+        dest='stop_at_exception',
+        help='Continue when an exception is raised',
+        action='store_false',
+        default=True,
+    )
     return parser
 
 
 def main():
-    argparser = get_parser()
-    options = argparser.parse_args()
+    parser = ArgumentParser()
+    augment_parser(parser)
+    options = parser.parse_args()
 
     statements = parse(options.cmd)
     for line in Executor(statements):
