@@ -70,10 +70,5 @@ class Command(BaseCommand):
         augment_parser(parser)
 
     def handle(self, cmd, stop_at_exception=False, **kw):
-        statements = parse(cmd, stdin=self.stdin)
-        for line in Executor(statements):
-            self.stdout.write(u'{}\n'.format(line))
-            r = line()
-            self.stdout.write(u'{}\n'.format(r))
-            if stop_at_exception and line.failed:
-                break
+        executor = Executor.parse(cmd, stdin=self.stdin)
+        executor(stdout=self.stdout, stop_at_exception=stop_at_exception)

@@ -3,6 +3,8 @@ import sys
 import collections
 import traceback
 
+from django_exec.parse import parse
+
 
 class Line(collections.namedtuple('Line', ['ast', 'original'])):
     @classmethod
@@ -110,6 +112,21 @@ class Executor(object):
     def __iter__(self):
         for code in self._code:
             yield ExecutionStep(code, self._globals, self._locals)
+
+    def __call__(self, stdout=None, stop_at_exception=False):
+        stdout = stdout or sys.stdout
+        for line in self:
+            stdout.write('{}\n'.format(line))
+            r = line()
+            stdout.write('{}\n'.format(r))
+            if stop_at_exception and line.failed:
+                break
+
+    @classmethod
+    def parse(cls, cmd, stdin=None):
+        stdin = stdin or sys.stdin
+        statements = parse(cmd, stdin)
+        return cls(statements)
 
 
 class ExecutionStep(object):
