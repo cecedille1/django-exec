@@ -12,16 +12,16 @@ def parse(value, stdin):
     return _parse(value)
 
 
-def _parse(input):
-    if not isinstance(input, str):
-        input = input.decode(sys.getfilesystemencoding())
-    input = input.strip()
-    if '\n' not in input:
-        return input.split(';')
+def _parse(input_):
+    if not isinstance(input_, str):
+        input_ = input_.decode(sys.getfilesystemencoding())
+    input_ = input_.strip()
+    if '\n' not in input_:
+        return input_.split(';')
 
     all_lines = []
     buffer = []
-    for line in input.split('\n'):
+    for line in input_.split('\n'):
         if buffer and not line.startswith((' ', '\t')):
             all_lines.append(';'.join(buffer))
             buffer = []

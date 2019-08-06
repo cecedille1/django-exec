@@ -37,10 +37,10 @@ class Line(collections.namedtuple('Line', ['ast', 'original'])):
 
 
 class Statement(Line):
-    def __call__(self, globals, locals):
-        previous = locals.copy()
+    def __call__(self, globals_, locals_):
+        previous = locals_.copy()
         exec(self.code, globals_, locals_)
-        return self._find_changes(previous, locals)
+        return self._find_changes(previous, locals_)
 
     def _find_changes(self, previous, current):
         changes, additions = {}, {}
@@ -57,8 +57,8 @@ class Statement(Line):
 
 
 class Expression(Line):
-    def __call__(self, globals, locals):
-        return Evaluation(self, eval(self.code, globals, locals))
+    def __call__(self, globals_, locals_):
+        return Evaluation(self, eval(self.code, globals_, locals_))
 
     @property
     def code(self):
@@ -66,7 +66,7 @@ class Expression(Line):
 
 
 class MisformattedStatement(Line):
-    def __call__(self, globals, locals):
+    def __call__(self, globals_, locals_):
         raise self.ast
 
     def __str__(self):
