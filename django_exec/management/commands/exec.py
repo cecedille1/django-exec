@@ -61,10 +61,6 @@ class Command(BaseCommand):
     executed.
     """
 
-    def __init__(self, *args, **kw):
-        self.stdin = kw.pop('stdin', sys.stdin)
-        super(Command, self).__init__(*args, **kw)
-
     def add_arguments(self, parser):
         super().add_arguments(parser)
         augment_parser(parser)
