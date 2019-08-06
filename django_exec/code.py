@@ -150,8 +150,8 @@ class ExecutionStep:
         except Exception:
             exc_type, exc_value, exc_traceback = sys.exc_info()
             tb = ''.join(traceback.format_tb(exc_traceback) +
-                          ['   ', self.code.original, '\n'] +
-                          traceback.format_exception_only(exc_type, exc_value))
+                         ['   ', self.code.original, '\n'] +
+                         traceback.format_exception_only(exc_type, exc_value))
             self.failed = True
             return Failed(self.code, tb)
         self.failed = False
