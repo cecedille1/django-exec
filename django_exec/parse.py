@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
 
 import sys
-from django.utils.six import text_type
 
 
-def parse(value, stdin=sys.stdin):
+def parse(value, stdin):
     if value == '-':
         return _parse(stdin.read())
     elif value.startswith(('./', '/')):
@@ -14,11 +13,11 @@ def parse(value, stdin=sys.stdin):
 
 
 def _parse(input):
-    if not isinstance(input, text_type):
+    if not isinstance(input, str):
         input = input.decode(sys.getfilesystemencoding())
     input = input.strip()
     if '\n' not in input:
-        return input.split(u';')
+        return input.split(';')
 
     all_lines = []
     buffer = []

@@ -39,7 +39,7 @@ class Line(collections.namedtuple('Line', ['ast', 'original'])):
 class Statement(Line):
     def __call__(self, globals, locals):
         previous = locals.copy()
-        exec_(self.code, globals, locals)
+        exec(self.code, globals_, locals_)
         return self._find_changes(previous, locals)
 
     def _find_changes(self, previous, current):
@@ -100,7 +100,7 @@ class Evaluation(collections.namedtuple('Evaluation', ['line', 'evaluation'])):
         return f'    {self.evaluation_repr}'
 
 
-class Executor(object):
+class Executor:
     """
     A step by step python code executor.
 
@@ -134,7 +134,7 @@ class Executor(object):
         return cls(statements)
 
 
-class ExecutionStep(object):
+class ExecutionStep:
     def __init__(self, code, globals_, locals_):
         self.code = code
         self.globals_ = globals_
