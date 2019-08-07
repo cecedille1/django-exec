@@ -1,0 +1,51 @@
+dist: xenial
+language: python
+
+# Avoid double build on PRs
+branches:
+  only:
+  - master
+  # https://www.python.org/dev/peps/pep-0440/ [N!]N(.N)*[{a|b|rc}N][.postN][.devN]
+  - /^v(\d+)(\.\d+)(\.\d+)?((a|b|rc)\d+)?(\.post\d+)?(\.dev\d+)?$/
+
+notifications:
+  email: false
+
+python:
+    - "3.5"
+    - "3.6"
+    - "3.7"
+env:
+    - DJANGO=2.1
+    - DJANGO=2.2
+
+install:
+    - pip install "django>=${DJANGO},<=${DJANGO}.999"
+    - pip install -r requirements.d/tests.txt
+script:
+    - pytest --cov --cov-append
+
+matrix:
+    exclude:
+        python: "3.4"
+        env: DJANGO=2.1
+
+jobs:
+  include:
+    - stage: Checks
+      python:
+          - "3.6"
+      env:
+          - DJANGO=2.0
+      install: pip install -r requirements.txt flake8
+      script:
+          - flake8
+          - django-admin makemigrations --pythonpath=. --settings=tests.settings --check --dry-run
+    - stage: Build & deploy
+      python:
+          - "3.6"
+      env:
+          - DJANGO=2.0
+      install: pip install -r requirements.d/docs.txt
+      script:
+        - python setup.py bdist_wheel --build-number ${TRAVIS_BUILD_NUMBER}
