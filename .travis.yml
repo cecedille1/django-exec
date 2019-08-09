@@ -21,7 +21,7 @@ env:
 
 install:
     - pip install "django>=${DJANGO},<=${DJANGO}.999"
-    - pip install -r requirements.d/tests.txt
+    - pip install -r requirements.d/tests.txt pytest-cov
 script:
     - pytest --cov --cov-append
 
