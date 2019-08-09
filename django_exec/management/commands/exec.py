@@ -1,7 +1,3 @@
-# -*- coding: utf-8 -*-
-
-import sys
-
 from django.core.management import BaseCommand
 from django_exec.code import Executor
 from django_exec.__main__ import augment_parser

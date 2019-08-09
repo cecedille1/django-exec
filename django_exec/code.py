@@ -9,24 +9,24 @@ from django_exec.parse import parse
 class Line(collections.namedtuple('Line', ['ast', 'original'])):
     @classmethod
     def build(cls, original):
-        stripped = original.strip()
+        line = original.strip()
 
-        if stripped.startswith('_ '):
-            _, stripped = stripped.split(' ', 1)
-            stripped = f'{{x: y for x, y in ({stripped}).__dict__.items() if not x.startswith("__")}}'
-        elif stripped.startswith('__ '):
-            _, stripped = stripped.split(' ', 1)
-            stripped = f'({stripped}).__dict__'
+        if line.startswith('_ '):
+            _, line = line.split(' ', 1)
+            line = '{{x: y for x, y in vars({}).items() if not x.startswith("__")}}'.format(line)
+        elif line.startswith('__ '):
+            _, line = line.split(' ', 1)
+            line = 'vars({})'.format(line)
 
         try:
-            parsed = ast.parse(stripped, mode='eval')
+            parsed = ast.parse(line, mode='eval')
         except SyntaxError:
             pass
         else:
             return Expression(parsed, original)
 
         try:
-            parsed = ast.parse(stripped)
+            parsed = ast.parse(line)
         except SyntaxError as e:
             return MisformattedStatement(e, original)
 
