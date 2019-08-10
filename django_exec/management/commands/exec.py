@@ -1,3 +1,5 @@
+import sys
+
 from django.core.management import BaseCommand
 from django_exec.code import Executor
 from django_exec.__main__ import augment_parser
@@ -62,5 +64,5 @@ class Command(BaseCommand):
         augment_parser(parser)
 
     def handle(self, cmd, stop_at_exception=False, **kw):
-        executor = Executor.parse(cmd, stdin=self.stdin)
+        executor = Executor.parse(cmd, stdin=sys.stdin)
         executor(stdout=self.stdout, stop_at_exception=stop_at_exception)
