@@ -13,8 +13,6 @@ def parse(value, stdin):
 
 
 def _parse(input_):
-    if not isinstance(input_, str):
-        input_ = input_.decode(sys.getfilesystemencoding())
     input_ = input_.strip()
     if '\n' not in input_:
         return input_.split(';')
