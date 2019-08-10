@@ -33,7 +33,7 @@ class Line(collections.namedtuple('Line', ['ast', 'original'])):
         return Statement(parsed, original)
 
     def __str__(self):
-        return f'>>> {self.original}'
+        return '>>> {}'.format(self.original)
 
 
 class Statement(Line):
