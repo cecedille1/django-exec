@@ -93,7 +93,8 @@ class Evaluation(collections.namedtuple('Evaluation', ['line', 'evaluation'])):
     @property
     def evaluation_repr(self):
         if isinstance(self.evaluation, dict):
-            return '{\n%s    }' % ''.join('        {key!r}: {value!r},\n'.format(key, value) for key, value in self.evaluation.items())
+            return '{\n%s    }' % ''.join('        {!r}: {!r},\n'.format(key, value)
+                                          for key, value in self.evaluation.items())
         return repr(self.evaluation)
 
     def __str__(self):
